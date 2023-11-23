@@ -1,0 +1,429 @@
+[1:06 pm, 23/11/2023] Puru Sachdeva: ####################### Lab assignment 5
+
+#1.
+punif(45,min=0,max=60,lower.tail=FALSE)
+punif(30,min=0,max=60)-punif(20,min=0,max=60)
+
+#2.
+dexp(3,rate=1/2)
+#jab cumulative nahi hota toh d function
+#b
+x<-seq(0,5,by=0.2)
+px<-dexp(x,rate=1/2)
+plot(x,px)
+
+#d
+x<-seq(0,5,by=0.2)
+px<-pexp(x,rate=1/2)
+plot(x,px)
+
+#c (P(X<3) at most 3)
+pexp(3,rate=1/2)
+
+#e to get random sample use r function
+n=1000
+px<-rexp(n,rate=1/2)
+plot(px) #since no x, only plot this
+plot(density(px)) #jahan jyada clustered hai, group and consider them as a single point
+
+#3.
+#a. P(X>=1)
+pgamma(1,shape=2,scale=1/2,lower.tail=FALSE) #don't remove words here coz there's another attribute bw shape and scale
+#b. P(X<=C) >=0.7
+qgamma(0.70,shape=2,scale=1/3)
+
+###################### Lab assignment 7
+#1.
+n=100
+df=n-1
+s<-rt(n,df)
+hist(s)
+
+#2.
+n=100
+df=c(2,10,25) #3 dfs, use fx thrice, ek time par ek df only
+s1<-rchisq(n,df[1])
+s2<-rchisq(n,df[2])
+s3<-rchisq(n,df[3])
+s1
+s2
+s3
+
+#3.
+x<-seq(-6,6,length=100)
+#dt single point par prob distribution
+df<-c(1,4,10,30)
+d1<-dt(x,df[1])
+d2<-dt(x,df[2])
+d3<-dt(x,df[3])
+d4<-dt(x,df[4])
+
+#density fx, yeh jo upar nikala hai, find plot for df 30
+plot(x,d4,type="l",col="red") #col hi use krsakte ho word
+
+#issi plot me different comparisons show kro
+#use lines to plot more graphs in the previous plot(must exist)
+color=c("green","blue","black")
+for(i in 1:3){
+  lines(x,dt(x,df[i]),col=color[i])
+}
+
+#4.
+
+#iv. 
+n=1000
+v1=10
+v2=20
+sample<-rf(n,df1=v1,df2=v2) #df1,df2 are keywords
+hist(sample)
+
+#ii. area of curve = p function = cumulative
+pf(1.5,v1,v2) #covering 1.5 se less
+pf(1.5,v1,v2,lower.tail=FALSE)
+
+#i. 95th percentile = q function 
+qf(0.95,v1,v2)
+
+#iii.
+q<-c(0.25,0.5,0.75,0.999)
+for(i in 1:4){
+  ans[i]<-qf(q[i],v1,v2)
+  ans[i]
+}
+ans[1]
+ans[2]
+
+qf(q[1],v1,v2)
+qf(q[2],v1,v2)
+qf(q[3],v1,v2)
+qf(q[4],v1,v2)
+
+
+
+############################## ASSIGNMENT - 6 ##
+
+
+#1. i.
+#range given - continuous else discrete
+# double integral if 1 then joint density function else not
+
+install.packages('pracma') #install single run
+#packet req for integral2 if installed already import by using
+library('pracma') #single run only
+f<-function(x,y){2*(2*x+3*y)/5}
+I<-integral2(f,xmin=0,xmax=1,ymin=0,ymax=1) #integral 2 means double integral
+I
+#to print only value and not error
+print(I$Q)
+
+#ii.
+#marginal distribution- ek var ko fixed at a time;
+#x=1 pe toh put x=1 in function, integrate in y 
+gx<-function(y){f(1,y)}
+Mx<-integral(gx,0,1) #give limits of y
+print(Mx) #$ not working here
+
+#iii.
+gy<-function(x){f(x,0)}
+My<-integral(gy,0,1) #give limits of x
+print(My)
+
+#iv.
+f1<-function(x,y){x*y*f(x,y)}
+expxy<-integral2(f1,0,1,0,1)
+expxy
+
+
+#2 i.
+# matrix = put all possible combinations in function and put in a matrix
+f2<-function(x,y){(x+y)/30}
+#matrix(array,nrows,ncols)
+
+# 1 3
+# 2 4
+A<-matrix(c(1,2,3,4),nrow=2,ncol=2) #array is filled columnwise by default
+# impp dont put ncol(s) wont work
+#if filling row wise add byrow=TRUE
+A
+A<-matrix(c(1,2,3,4),nrow=2,ncol=2,byrow=TRUE)
+A
+
+M<-matrix(c(f2(0,0:2),f2(1,0:2),f2(2,0:2),f2(3,0:2)) , nrow=4, ncol=3, byrow=TRUE)
+M
+#ii.
+sum(M)
+#yes it is
+
+#iii.
+# Mar of x i.e har row ka sum
+gx<-apply(M,1,sum) #row wise ke liye 2nd argument = 1 else 2;; 3rd argment specifies the type of operation
+gy<-apply(M,2,sum)
+gx
+gy
+
+#iv.
+#P(X=0|Y=1) = f(0,1) / gy(1)
+cond_prob<-M[1,2]/gy[2]
+cond_prob
+
+# v. when double variables f(x,y) nahi but marginal dis
+# E(x) = sum(x*gx)
+# var= E(x^2)-(E(x))^2
+x<-0:3
+y<-0:2
+exp_x<-sum(x*gx)
+exp_x_sqr<-sum((x^2)*gx)
+var_x<-exp_x_sqr - (exp_x)^2
+var_x
+
+# E(x,y) = sum (sum (x*y*fxy))
+# cov(x,y) = E(xy)-E(x)*E(y)
+# corr_coeff = cov(x,y)/sqrt(var(x)*var(y))
+[1:06 pm, 23/11/2023] Puru Sachdeva: #Q1(a) verify joint density function f(x,y) or not?
+library('pracma')
+f=function(x,y) 2*(2*x+3*y)/5
+
+I=integral2(f,xmin=0,xmax=1,ymin=0,ymax=1)
+print(I$Q) # Returns a list with Q the integral and error the error term. 
+#use $ command to extract either Q or error
+
+#Q1(b) Marginal distibution g(X) at x=1
+gx_1=function(y) f(1,y)
+
+gx1=integral(gx_1,0,1)
+print(gx1)
+
+
+#Q1(c) Marginal distribution h(Y) at y=0
+hy_0=function(x) f(x,0)
+hy0=integral(hy_0,0,1)
+print(hy0)
+
+#Q1(d) Expected value of x*y
+f_xy=function (x,y) f(x,y)*x*y
+E_xy=integral2(f_xy,0,1,0,1)
+print(E_xy$Q
+
+#--------------------------------------------------
+[1:06 pm, 23/11/2023] Puru Sachdeva: #Q2(a)
+#joint mass function f(x,y) in matrix form
+f=function(x,y) (x+y)/30
+x=c(0:3)
+y=c(0:2)
+M1=matrix(c(f(0,0:2),f(1,0:2),f(2,0:2),f(3,0:2)), nrow=4,ncol=3,byrow=TRUE)
+print(M1)
+
+#Q2(b) check that it is joint mass function
+sum(M1)
+
+#Q2(c) marginal distribution of X=0,1,2,3
+
+gx=apply(M1,1,sum) # 1 represents applying sum function on each row of matrix M1
+print (gx)
+#cdf_x=cumsum(gx)
+#plot(x,cdf_x,pch=19,points(x,gx,pch=22),main='CDF (circle) and pmf (square) of X',ylab='CDF and pmf')
+
+#Q2(d) marginal distribution of y=0,1,2
+
+hy=apply(M1,2,sum) # 2 represents applying sum function on each column of matrix M1
+print(hy)
+#cdf_y=cumsum(hy)
+#plot(y,cdf_y,pch=19,points(y,hy,pch=22), main='CDF (circle) and pmf (square) of X',ylab='CDF and pmf')
+
+#Q2(e) conditional probability p(x=0| y=1)
+M1[1,2]
+hy[2]
+p_x0_y1=M1[1,2]/hy[2]
+p_x0_y1
+
+#Q2(f) Expected value of x,y and xy, var, covar,correlation 
+E_x=sum(x*gx)
+E_x
+
+E_x2=sum(x*x*gx)
+E_x2
+
+var_x=E_x2-E_x*E_x
+var_x
+
+
+E_y=sum(y*hy)
+E_y
+
+E_y2=sum(y*y*hy)
+E_y2
+
+var_y=E_y2-E_y*E_y
+var_y
+
+x=c(0:3)
+y=c(0:2)
+
+f1=function(x,y) x*y*(x+y)/30
+M2=matrix(c(f1(0,0:2),f1(1,0:2),f1(2,0:2),f1(3,0:2)), nrow=4,,ncol=3,byrow=TRUE)
+M2
+E_xy=sum(M2)
+E_xy
+
+cov_xy=E_xy-E_x*E_y
+cov_xy
+
+r_xy=cov_xy/sqrt(var_x*var_y)
+r_xy
+#------------------------------------------------------------------------
+[1:06 pm, 23/11/2023] Puru Sachdeva: #-----------------------------------------------------------
+ #Q1 Use the  rt(n,df) function to investigate the t-distribution for n=100 and df=n-1.
+n=100
+df=n-1
+y=rt(n,df)
+y
+ samples=rt(n,df)
+ samples
+  hist(samples)
+ 
+ #-------------------------------------------------------
+ #Q2 Use the rchisq(n,df) function  to investigate the chi-square distribution with n=100 and df=2,10 and 25.
+# rchisq(n,df)
+ n=100
+ df=c(2,10,25)
+ 
+ rchisq(n,df[1])
+ rchisq(n,df[2])
+ rchisq(n,df[3])
+ 
+#---------------------------------------------------------
+#Q3. Generate a vector of 100 values between -6 and 6.use the dt function to find
+#the values of a t-distribution given a random variable x and certain degrees of freedom.
+#Using these values plot the density function for student’s t-distribution.
+#Shows a comparison of probability density functions having different degrees of freedom.
+
+# Generate a vector of 100 values between -6 and 6
+x <- seq(-6, 6, length = 100)
+x
+# Degrees of freedom
+df = c(1,4,10,30)
+colour = c("black", "orange", "green", "yellow")
+
+#find the values of t-dist
+dt(x,df[1])
+dt(x,df[2])
+dt(x,df[3])
+dt(x,df[4])
+
+#plot the density function
+plot(x,dt(x,df[4]),type = "l",xlab = "t-value", ylab = "Density", 
+     main = "Comparison of t-distributions", col=colour[4])
+for (i in 1:3){
+  lines(x,dt(x,df[i]),type = "l",col = colour[i])
+}
+########Extra pt is used to find area under the curve. Now we find area between 2.4 and 3.6
+A1<-pt(3.6, 30, lower.tail=TRUE)-pt(2.4, 30, lower.tail=TRUE)
+A1
+#--------------------------------------------------------------
+#Q4
+#(i) Find the 95th percentile of the F distribution with (10, 20) degrees of freedom.
+qf(.95, df1=10, df2=20) 
+
+
+#(ii) use the pf() to calculate the area under the curve for the interval [0,1.5] and 
+#the interval [1.5,+∞) of a F-curve with with v1=10 and v2=20.
+x = 1.5
+v1 = 10
+v2 = 20
+# interval $[0,1.5]
+S1<-pf(x, df = v1, df2 = v2, lower.tail = TRUE) 
+S1
+# interval $[1.5,+inf)
+S2<-pf(x, df = v1, df2 = v2, lower.tail = FALSE)
+S2
+AREA<-S1+S2
+AREA
+
+#(iii) use the qf() to calculate the quantile for a given area (= probability) under the curve for a F-curve
+#with v1=10 and v2=20 that corresponds to q=0.25,0.5,0.75 and 0.999. 
+
+q <- c(0.25, 0.5, 0.75, 0.999)
+v1=10
+v2=20
+qf(q[1], df1 = v1, df2 = v2, lower.tail = TRUE)
+qf(q[2], df1 = v1, df2 = v2, lower.tail = TRUE)
+qf(q[3], df1 = v1, df2 = v2, lower.tail = TRUE)
+qf(q[4], df1 = v1, df2 = v2, lower.tail = TRUE)
+
+
+#(iv) use rf()function to generate 1000 random values from the F-distribution with v1=10 and v2=20.
+#Thereafter we plot a histogram.
+
+sample <- rf(1000, df1 = 10, df2 = 20)
+hist(sample)
+
+x<- rf(1000, df1 = 10, df2 = 20)
+hist(x,  
+     breaks='scott', 
+     freq = FALSE, 
+     xlim = c(0,3), 
+     ylim = c(0,1),
+     xlab = '', 
+)
+
+##########################################
+pexp(5,1/8)-pexp(4,1/8)
+qexp(1/2,1/8)
+[1:06 pm, 23/11/2023] Puru Sachdeva: # Make sure you use RUN for execution as we want one 
+#step RUN at a time
+#Step 1 - Importing Data
+#___________________
+
+#Importing the csv data 
+data<-read.csv(file.choose())
+
+#Step 2 - Validate data for correctness
+#__________________
+
+#Count of Rows and columns
+dim(data)
+
+#View top 10 rows of the dataset
+head(data,10)
+
+#Step 3 - Calculate the population mean and plot the observations
+#_______________________
+
+#Calculate the population mean
+mean(data$Wall.Thickness)
+
+#Plot all the observations in the data
+hist(data$Wall.Thickness,col = "pink",main = "Histogram for Wall Thickness",xlab = "wall thickness")
+abline(v=12.8,col="red",lty=1)
+
+#We will take sample size=10, samples=9000
+#Calculate the arithmetice mean and plot the mean of sample 9000 times
+
+s10<-c()
+n=9000
+for (i in 1:n) {
+  s10[i] = mean(sample(data$Wall.Thickness,10, replace = TRUE))}
+hist(s10, col ="lightgreen", main="Sample size =10",xlab = "wall thickness")
+abline(v = mean(s10), col = "Red")
+abline(v = 12.8, col = "blue")
+#We will take sample size=30, 50 & 500 samples=9000
+#Calculate the arithmetice mean and plot the mean of sample 9000 times
+
+s30 <- c()
+s50 <- c()
+s500 <- c()
+n =9000
+for ( i in 1:n){
+  s30[i] = mean(sample(data$Wall.Thickness,30, replace = TRUE))
+  s50[i] = mean(sample(data$Wall.Thickness,50, replace = TRUE))
+  s500[i] = mean(sample(data$Wall.Thickness,500, replace = TRUE))
+}
+par(mfrow=c(1,3))
+hist(s30, col ="lightblue",main="Sample size=30",xlab ="wall thickness")
+abline(v = mean(s30), col = "red")
+
+hist(s50, col ="lightgreen", main="Sample size=50",xlab ="wall thickness")
+abline(v = mean(s50), col = "red")
+
+hist(s500, col ="orange",main="Sample size=500",xlab ="wall thickness")
+abline(v = mean(s500), col = "red")
